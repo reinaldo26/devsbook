@@ -1,6 +1,7 @@
 <?php 
-    
-$base = "http://localhost/Projects/PHPZP/devsbook/";
+
+session_start();  
+$base = "http://localhost/Projects/PHPZP/devsbook";
 $db_name = "devsbook";
 $db_host = "localhost";
 $db_user = "root";

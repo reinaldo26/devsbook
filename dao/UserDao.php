@@ -70,4 +70,16 @@ class UserDao implements ud {
         $conn->execute();
         return true;
     }
+
+    public function insert(User $user) {
+        $conn = $this->pdo->prepare("INSERT INTO users (email, password, name, birthdate, token) VALUES (:email, :password, :name, :birthdate, :token)");
+        $conn->bindValue(':email', $user->email);
+        $conn->bindValue(':password', $user->password);
+        $conn->bindValue(':name', $user->name);
+        $conn->bindValue(':birthdate', $user->birthdate);
+        $conn->bindValue(':token', $user->token);
+        $conn->execute();
+        return true;
+    }
+
 }

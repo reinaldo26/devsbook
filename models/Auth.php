@@ -50,7 +50,7 @@ class Auth {
     public function registerUser($name, $email, $password, $birthdate) {
         $userDao = new UserDao($this->pdo);
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $token = //
+        $token = md5(time().rand(0, 9999));
         $newUser = new User();
         $newUser->name = $name;
         $newUser->email = $email;
@@ -58,6 +58,8 @@ class Auth {
         $newUser->birthdate = $birthdate;
         $newUser->token = $token;
         $userDao->insert($newUser);
+        $_SESSION['token'] = $token;
     }
+
 
 }

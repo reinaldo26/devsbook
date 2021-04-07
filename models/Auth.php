@@ -42,4 +42,22 @@ class Auth {
         return false;
     }
 
+    public function emailExists($email) {
+        $userDao = new UserDao($this->pdo);
+        return $userDao->findByEmail($email) ? true : false;
+    }
+
+    public function registerUser($name, $email, $password, $birthdate) {
+        $userDao = new UserDao($this->pdo);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $token = //
+        $newUser = new User();
+        $newUser->name = $name;
+        $newUser->email = $email;
+        $newUser->password = $hash;
+        $newUser->birthdate = $birthdate;
+        $newUser->token = $token;
+        $userDao->insert($newUser);
+    }
+
 }

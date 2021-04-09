@@ -4,6 +4,7 @@ require_once 'models/Auth.php';
 
 $auth = new Auth($pdo, $base);
 $userInfo = $auth->checkToken();
+$activeMenu = 'home';
 
 require_once 'partials/header.php';
 require_once 'partials/menu.php';

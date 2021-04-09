@@ -18,6 +18,7 @@ if ($name && $email && $password && $birthdate) {
     }
 
     $birthdate = $birthdate[2]."-".$birthdate[1]."-".$birthdate[0];
+    
     if (strtotime($birthdate) === false) {
         $_SESSION['flash'] = "Data de nascimento inválida.";
         header("Location: ".$base."/signup.php");

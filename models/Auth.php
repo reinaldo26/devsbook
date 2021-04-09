@@ -61,5 +61,4 @@ class Auth {
         $_SESSION['token'] = $token;
     }
 
-
 }

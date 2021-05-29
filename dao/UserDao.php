@@ -56,6 +56,22 @@ class UserDao implements ud {
         return false;
     }
 
+    public function findById($id) {
+        if (!empty($id)) {
+            $conn = $this->pdo->prepare("SELECT * FROM users WHERE id = :id");
+            $conn->bindValue(':id', $id);
+            $conn->execute();
+            
+            if ($conn->rowCount() > 0) {
+                $data = $conn->fetch(PDO::FETCH_ASSOC);
+                $user = $this->generateUser($data);
+                return $user;
+            }
+        } 
+
+        return false;
+    }
+
     public function update(User $user) {
         $conn = $this->pdo->prepare("UPDATE users SET email = :email, password = :password, name = :name, birthdate = :birthdate, city = :city, work = :work, avatar = :avatar, cover = :cover, token = :token WHERE id = :id");
         $conn->bindValue(':email', $user->email);

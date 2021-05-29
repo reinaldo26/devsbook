@@ -10,4 +10,5 @@ class Post {
 
 interface PostD {
     public function insert(Post $p);
+    public function getHomeFeed($id_user);
 }

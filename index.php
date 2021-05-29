@@ -1,12 +1,14 @@
 <?php
 require_once 'config.php';
 require_once 'models/Auth.php';
+require_once 'dao/PostDao.php';
 
 $auth = new Auth($pdo, $base);
 $userInfo = $auth->checkToken();
 $activeMenu = 'home';
 
-//
+$postDao = new PostDao($pdo);
+$feed = $postDao->getHomeFeed($userInfo->id);
 
 require_once 'partials/header.php';
 require_once 'partials/menu.php';
@@ -16,6 +18,10 @@ require_once 'partials/menu.php';
     <div class="row">
         <div class="column pr-5">
             <?php require_once 'partials/feed-editor.php'; ?>
+
+            <?php foreach($feed as $item): ?>
+                <?php require 'partials/feed-item.php'; ?>
+            <?php endforeach; ?>
         </div>
         <div class="column side pl-5">
             <div class="box banners">

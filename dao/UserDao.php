@@ -1,6 +1,8 @@
 <?php 
 
 require_once 'models/User.php';
+require_once 'UserRelationDao.php';
+require_once 'dao/PostDao.php';
 
 class UserDao implements ud {
 
@@ -10,7 +12,7 @@ class UserDao implements ud {
         $this->pdo = $driver;
     }
 
-    private function generateUser($array) {
+    private function generateUser($array, $full = false) {
         $u = new User();
         $u->id = $array['id'] ?? 0;
         $u->email = $array['email'] ?? '';
@@ -19,9 +21,32 @@ class UserDao implements ud {
         $u->birthdate = $array['birthdate'] ?? '';
         $u->city = $array['city'] ?? '';
         $u->work = $array['work'] ?? '';
-        $u->avatar = $array['avatar'] ?? '';
+        $u->avatar = $array['avatar'] ?? 'default.jpg';
         $u->cover = $array['cover'] ?? '';
         $u->token = $array['token'] ?? '';
+
+        if($full) {
+            $userDao = new UserRelationDao($this->pdo);
+            $postDao = new PostDao($this->pdo);
+
+            // followers
+            $u->followers = $userDao->getFollowers($u->id);
+            foreach($u->followers as $key => $follower_id) {
+                $newUser = $this->findById($follower_id);
+                $u->followers[$key] = $newUser;
+            }
+
+            // following
+            $u->following = $userDao->getFollowing($u->id);
+            foreach($u->following as $key => $follower_id) {
+                $newUser = $this->findById($follower_id);
+                $u->following[$key] = $newUser;
+            }
+
+            // fotos
+            $u->photos = $postDao->getPhotosFrom($u->id);
+        }
+
         return $u;
     }
 
@@ -56,7 +81,7 @@ class UserDao implements ud {
         return false;
     }
 
-    public function findById($id) {
+    public function findById($id, $full = false) {
         if (!empty($id)) {
             $conn = $this->pdo->prepare("SELECT * FROM users WHERE id = :id");
             $conn->bindValue(':id', $id);
@@ -64,7 +89,7 @@ class UserDao implements ud {
             
             if ($conn->rowCount() > 0) {
                 $data = $conn->fetch(PDO::FETCH_ASSOC);
-                $user = $this->generateUser($data);
+                $user = $this->generateUser($data, $full);
                 return $user;
             }
         } 

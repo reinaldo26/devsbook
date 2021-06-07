@@ -19,11 +19,30 @@ class PostDao implements PostD {
         $conn->execute();
     }
 
+    public function getUserFeed($id_user) {
+        $array = [];
+
+        // pega os posts ordenados pela data
+        $conn = $this->pdo->prepare("SELECT * FROM posts WHERE id_user = :id_user");
+        $conn->bindValue(":id_user", $id_user);
+        $conn->execute();
+
+        if($conn->rowCount() > 0) {
+            $data = $conn->fetchAll(PDO::FETCH_ASSOC);
+
+            // transforma o resultado em objetos
+            $array = $this->_postListToObject($data, $id_user);
+        }
+
+        return $array;
+    }
+
     public function getHomeFeed($id_user) {
         $array = [];
         // lista dos usuarios que o usuario segue
         $usuarioDao = new UserRelationDao($this->pdo);
-        $userList = $usuarioDao->getRelationsFrom($id_user);
+        $userList = $usuarioDao->getFollowing($id_user);
+        $userList[] = $id_user;
         $userList = implode(",", $userList);
 
         // pega os posts ordenados pela data
@@ -32,7 +51,24 @@ class PostDao implements PostD {
         if($conn->rowCount() > 0) {
             $data = $conn->fetchAll(PDO::FETCH_ASSOC);
 
-            // transforma o resiltado em objetos
+            // transforma o resultado em objetos
+            $array = $this->_postListToObject($data, $id_user);
+        }
+
+        return $array;
+    }
+
+    public function getPhotosFrom($id_user) {
+        $array = [];
+
+        $conn = $this->pdo->prepare("SELECT * FROM posts WHERE id_user = :id_user AND type = 'photo' ORDER BY created_at DESC");
+        $conn->bindValue(":id_user", $id_user);
+        $conn->execute();
+
+        if($conn->rowCount() > 0) {
+            $data = $conn->fetchAll(PDO::FETCH_ASSOC);
+
+            // transforma o resultado em objetos
             $array = $this->_postListToObject($data, $id_user);
         }
 

@@ -8,5 +8,6 @@ class UserRelation {
 
 interface u_rel {
     public function insert(UserRelation $u);
-    public function getRelationsFrom($id);
+    public function getFollowing($id);
+    public function getFollowers($id);
 }
